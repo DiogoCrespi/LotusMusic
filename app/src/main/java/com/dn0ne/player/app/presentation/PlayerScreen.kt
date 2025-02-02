@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -14,6 +15,7 @@ import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -30,6 +32,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.automirrored.rounded.ViewList
@@ -76,9 +79,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.util.fastFirstOrNull
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.constraintlayout.compose.ExperimentalMotionApi
 import com.dn0ne.player.R
 import com.dn0ne.player.app.domain.sort.PlaylistSort
 import com.dn0ne.player.app.domain.sort.SortOrder
@@ -109,6 +114,7 @@ import com.dn0ne.player.app.presentation.components.trackList
 import com.dn0ne.player.app.presentation.components.trackinfo.SearchField
 import com.dn0ne.player.app.presentation.components.trackinfo.TrackInfoSheet
 import com.kmpalette.color
+import kotlin.math.abs
 import com.kmpalette.rememberDominantColorState
 import com.materialkolor.DynamicMaterialTheme
 import com.materialkolor.PaletteStyle
@@ -116,34 +122,10 @@ import com.materialkolor.ktx.toHct
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.constraintlayout.compose.ExperimentalMotionApi
-import kotlin.math.abs
-
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.launch
-import kotlin.math.abs
-
-val swipeThreshold = 100.dp
-val dragDistanceThreshold = 80f
-val holdTimeThreshold = 300L
-
-
-
-
-
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMotionApi::class)
-
 @Composable
 fun PlayerScreen(
+
     viewModel: PlayerViewModel,
     onCoverArtPick: () -> Unit,
     onFolderPick: (scan: Boolean) -> Unit,
@@ -819,6 +801,7 @@ fun PlayerScreen(
                                         PlayerScreenEvent.OnViewTrackInfoClick(it)
                                     )
                                 },
+
                                 onGoToAlbumClick = {
                                     viewModel.onEvent(PlayerScreenEvent.OnGoToAlbumClick(it))
                                     viewModel.onEvent(PlayerScreenEvent.OnPlayerExpandedChange(false))
@@ -854,13 +837,14 @@ fun PlayerScreen(
                                         )
                                     )
                                 },
-
                                 modifier = Modifier
                                     .align(alignment = Alignment.CenterHorizontally)
                                     .fillMaxWidth()
                                     .pointerInput(Unit) {
                                         var totalDragAmount = 0f
                                         var dragStartTime = 0L
+                                        val dragDistanceThreshold = 80f
+                                        val holdTimeThreshold = 300L
 
                                         detectHorizontalDragGestures(
                                             onDragStart = { dragStartTime = System.currentTimeMillis() },
@@ -886,7 +870,6 @@ fun PlayerScreen(
                                             }
                                         )
                                     }
-
                             )
                         }
                     }
