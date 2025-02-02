@@ -1281,6 +1281,12 @@ class PlayerViewModel(
                     }
                 }
             }
+            is OnSwipeTrack -> {
+                when (event.direction) {
+                    SwipeDirection.RIGHT -> onEvent(PlayerScreenEvent.OnSeekToNextClick)
+                    SwipeDirection.LEFT -> onEvent(PlayerScreenEvent.OnSeekToPreviousClick)
+                }
+            }
         }
     }
 

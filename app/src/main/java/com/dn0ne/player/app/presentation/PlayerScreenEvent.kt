@@ -8,6 +8,7 @@ import com.dn0ne.player.app.domain.sort.TrackSort
 import com.dn0ne.player.app.domain.track.Playlist
 import com.dn0ne.player.app.domain.track.Track
 
+
 sealed interface PlayerScreenEvent {
     data class OnTrackClick(val track: Track, val playlist: Playlist): PlayerScreenEvent
 
@@ -69,4 +70,11 @@ sealed interface PlayerScreenEvent {
     data object OnWriteLyricsToTagClick: PlayerScreenEvent
     data object OnFetchLyricsFromRemoteClick: PlayerScreenEvent
     data object OnPublishLyricsOnRemoteClick: PlayerScreenEvent
+
+    data class OnSwipeTrack(val direction: SwipeDirection) : PlayerScreenEvent
+
+    enum class SwipeDirection {
+        LEFT, RIGHT
+    }
+
 }

@@ -116,7 +116,32 @@ import com.materialkolor.ktx.toHct
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.constraintlayout.compose.ExperimentalMotionApi
+import kotlin.math.abs
+
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
+import androidx.compose.runtime.*
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
+import kotlin.math.abs
+
+val swipeThreshold = 100.dp
+val dragDistanceThreshold = 80f
+val holdTimeThreshold = 300L
+
+
+
+
+
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMotionApi::class)
+
 @Composable
 fun PlayerScreen(
     viewModel: PlayerViewModel,
@@ -745,6 +770,7 @@ fun PlayerScreen(
                             }
 
                             PlayerSheet(
+
                                 playbackStateFlow = viewModel.playbackState,
                                 onPlayerExpandedChange = {
                                     viewModel.onEvent(PlayerScreenEvent.OnPlayerExpandedChange(it))
@@ -828,9 +854,39 @@ fun PlayerScreen(
                                         )
                                     )
                                 },
+
                                 modifier = Modifier
                                     .align(alignment = Alignment.CenterHorizontally)
                                     .fillMaxWidth()
+                                    .pointerInput(Unit) {
+                                        var totalDragAmount = 0f
+                                        var dragStartTime = 0L
+
+                                        detectHorizontalDragGestures(
+                                            onDragStart = { dragStartTime = System.currentTimeMillis() },
+                                            onDragEnd = {
+                                                val elapsedTime = System.currentTimeMillis() - dragStartTime
+                                                if (abs(totalDragAmount) > dragDistanceThreshold || elapsedTime > holdTimeThreshold) {
+                                                    if (totalDragAmount > 0) {
+                                                        viewModel.onEvent(PlayerScreenEvent.OnSeekToPreviousClick)
+                                                    } else {
+                                                        viewModel.onEvent(PlayerScreenEvent.OnSeekToNextClick)
+                                                    }
+
+                                                    val isPlaying = viewModel.playbackState.value.isPlaying
+                                                    if (!isPlaying) {
+                                                        viewModel.onEvent(PlayerScreenEvent.OnPlayClick)
+                                                    }
+                                                }
+                                                totalDragAmount = 0f
+                                            },
+                                            onHorizontalDrag = { change, dragAmount ->
+                                                totalDragAmount += dragAmount
+                                                change.consume()
+                                            }
+                                        )
+                                    }
+
                             )
                         }
                     }
@@ -1732,6 +1788,7 @@ fun ScrollToTopAndLocateButtons(
         }
     }
 }
+
 
 @Serializable
 private sealed interface PlayerRoutes {
