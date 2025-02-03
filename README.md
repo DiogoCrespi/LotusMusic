@@ -3,7 +3,7 @@
 
   # Lotus
 
-  ### Music player for Android
+  ### Music player for Android  add SwipeDirection
   
 </div>
 
