@@ -71,7 +71,9 @@ sealed interface PlayerScreenEvent {
     data object OnFetchLyricsFromRemoteClick: PlayerScreenEvent
     data object OnPublishLyricsOnRemoteClick: PlayerScreenEvent
 
+    data object OnRemixClick: PlayerScreenEvent
     data class OnSwipeTrack(val direction: SwipeDirection) : PlayerScreenEvent
+
     enum class SwipeDirection {
         LEFT, RIGHT
     }

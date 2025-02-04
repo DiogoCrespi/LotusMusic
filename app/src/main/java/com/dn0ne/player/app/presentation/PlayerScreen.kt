@@ -33,7 +33,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.PlaylistAdd
 import androidx.compose.material.icons.automirrored.rounded.ViewList
 import androidx.compose.material.icons.rounded.AddToQueue
@@ -45,6 +44,7 @@ import androidx.compose.material.icons.rounded.MyLocation
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material.icons.rounded.SelectAll
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -85,6 +85,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import com.dn0ne.player.R
+import com.dn0ne.player.app.domain.playback.PlaybackMode
 import com.dn0ne.player.app.domain.sort.PlaylistSort
 import com.dn0ne.player.app.domain.sort.SortOrder
 import com.dn0ne.player.app.domain.sort.TrackSort
@@ -121,6 +122,9 @@ import com.materialkolor.PaletteStyle
 import com.materialkolor.ktx.toHct
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+
+
+
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class, ExperimentalMotionApi::class)
 @Composable
@@ -836,6 +840,9 @@ fun PlayerScreen(
                                             playlist = playlist
                                         )
                                     )
+                                },
+                                onRemixClick = {
+                                    viewModel.onEvent(PlayerScreenEvent.OnRemixClick)
                                 },
                                 modifier = Modifier
                                     .align(alignment = Alignment.CenterHorizontally)
@@ -1771,7 +1778,6 @@ fun ScrollToTopAndLocateButtons(
         }
     }
 }
-
 
 @Serializable
 private sealed interface PlayerRoutes {

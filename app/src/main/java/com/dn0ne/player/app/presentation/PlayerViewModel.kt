@@ -370,6 +370,7 @@ class PlayerViewModel(
     fun onEvent(event: PlayerScreenEvent) {
 
         when (event) {
+            is PlayerScreenEvent.OnRemixClick -> remixQueue()
             is OnTrackClick -> {
                 player?.let { player ->
                     if (_playbackState.value.playlist != event.playlist) {
@@ -399,6 +400,7 @@ class PlayerViewModel(
                     }
                 }
             }
+
 
             OnPauseClick -> {
                 player?.run {
@@ -1536,6 +1538,35 @@ class PlayerViewModel(
             )
         }
     }
+
+    fun remixQueue() {
+        val player = player ?: return
+        val currentQueue = _playbackState.value.playlist?.trackList?.toMutableList() ?: return
+        val currentTrack = _playbackState.value.currentTrack ?: return
+
+        if (currentQueue.size > 1) {
+            var newQueue: MutableList<Track>
+
+            do {
+                newQueue = currentQueue.shuffled().toMutableList()
+            } while (newQueue == currentQueue)
+            newQueue.remove(currentTrack)
+            newQueue.add(0, currentTrack)
+
+            _playbackState.update {
+                it.copy(
+                    playlist = it.playlist?.copy(trackList = newQueue)
+                )
+            }
+
+            player.clearMediaItems()
+            player.addMediaItems(newQueue.map { it.mediaItem })
+            player.prepare()
+            player.seekTo(0, 0L)
+            player.play()
+        }
+    }
+
 
     /**
      * Returns next element after [index]. If next element index is out of bounds returns first element.

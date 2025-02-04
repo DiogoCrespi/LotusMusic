@@ -123,6 +123,7 @@ fun PlayerSheet(
     onReorderingQueue: (Int, Int) -> Unit,
     onTrackClick: (Track, Playlist) -> Unit,
     settings: Settings,
+    onRemixClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val playbackState by playbackStateFlow.collectAsState()
