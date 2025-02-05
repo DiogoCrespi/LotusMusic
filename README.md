@@ -1,7 +1,7 @@
 <div align="center">
   <img src="fastlane/metadata/android/en-US/images/icon-fit.png" width="200px" />
 
-  # Lotus add SwipeDirection and remixQueue
+  # Lotus 
 
   ### Music player for Android  add SwipeDirection and remixQueue
   
